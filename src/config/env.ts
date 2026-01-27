@@ -12,4 +12,28 @@ if (!PORT) {
   throw new Error("PORT is not defined in environment variables");
 }
 
-export { DATABASE_URL, PORT };
+// Better Auth
+const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
+if (!BETTER_AUTH_URL) {
+  throw new Error("BETTER_AUTH_URL is not defined in environment variables");
+}
+
+// Google OAuth
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+if (!GOOGLE_CLIENT_ID) {
+  throw new Error("GOOGLE_CLIENT_ID is not defined in environment variables");
+}
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+if (!GOOGLE_CLIENT_SECRET) {
+  throw new Error(
+    "GOOGLE_CLIENT_SECRET is not defined in environment variables",
+  );
+}
+
+export {
+  BETTER_AUTH_URL,
+  DATABASE_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  PORT,
+};
