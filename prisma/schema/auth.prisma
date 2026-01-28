@@ -1,10 +1,16 @@
+enum Role {
+    ADMIN
+    SELLER
+    CUSTOMER
+}
+
 model User {
     id            String    @id
     name          String
     email         String
     emailVerified Boolean   @default(false)
     image         String?
-    role          String?   @default("CUSTOMER")
+    role          Role      @default(CUSTOMER)
     dob           DateTime?
     phone         String?   @default("")
     address       String?   @default("") @db.Text

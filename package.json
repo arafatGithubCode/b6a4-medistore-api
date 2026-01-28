@@ -2,7 +2,8 @@
   "name": "b6a4-medistore-api",
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "dev": "tsx --watch src/server.ts"
+    "dev": "tsx --watch src/server.ts",
+    "seed::admin": "tsx src/scripts/seed-admin.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
