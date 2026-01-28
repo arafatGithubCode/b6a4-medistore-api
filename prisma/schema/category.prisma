@@ -1,0 +1,8 @@
+model Category {
+    id        String     @id @default(uuid()) @db.Uuid
+    name      String     @db.VarChar(255)
+    slug      String     @db.VarChar(255)
+    medicines Medicine[]
+
+    @@map("category")
+}
