@@ -717,6 +717,7 @@ __metadata:
     cors: "npm:^2.8.6"
     dotenv: "npm:^17.2.3"
     express: "npm:^5.2.1"
+    http-errors: "npm:^2.0.1"
     pg: "npm:^8.17.2"
     prisma: "npm:^7.3.0"
     tsx: "npm:^4.21.0"
