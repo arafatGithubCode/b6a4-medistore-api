@@ -1,17 +1,18 @@
 model Medicine {
-    id          String     @id @default(uuid()) @db.Uuid
-    name        String     @db.VarChar(255)
-    brand       String     @db.VarChar(255)
-    description String     @db.Text
-    slug        String     @db.VarChar(255)
+    id          String         @id @default(uuid()) @db.Uuid
+    name        String         @db.VarChar(255)
+    brand       String         @db.VarChar(255)
+    description String         @db.Text
+    slug        String         @unique @db.VarChar(255)
     dosageForm  DosageForm
-    strength    String     @db.VarChar(100)
+    unit        Unit
+    strength    String         @db.VarChar(100)
     stock       Int
-    price       Decimal    @db.Decimal(10, 2)
-    image       String     @db.VarChar(255)
-    isActive    Boolean    @default(true)
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
+    price       Decimal        @db.Decimal(10, 2)
+    image       String         @db.VarChar(255)
+    status      MedicineStatus @default(AVAILABLE)
+    createdAt   DateTime       @default(now())
+    updatedAt   DateTime       @updatedAt
 
     sellerId String
     seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
@@ -21,7 +22,7 @@ model Medicine {
     reviews    Review[]
     orders     OrderItem[]
 
-    @@index([sellerId])
+    @@index([sellerId, categoryId])
     @@map("medicine")
 }
 
@@ -36,4 +37,18 @@ enum DosageForm {
     PATCH
     SUPPOSITORY
     POWDER
+}
+
+enum Unit {
+    MG
+    ML
+    G
+    IU
+    MCG
+}
+
+enum MedicineStatus {
+    AVAILABLE
+    OUT_OF_STOCK
+    DISCONTINUED
 }

@@ -1,9 +1,10 @@
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import createError from "http-errors";
-import { sendJSON } from "./helpers/send-json";
 import { auth } from "./lib/auth";
+import { errorHandler } from "./middlewares/error-handler";
+import { v1Routes } from "./routes/v1";
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 
+app.use("/api/v1", v1Routes);
+
 app.get("/", (req, res) => {
   res.send("Welcome to the MediStore API");
 });
@@ -32,9 +35,6 @@ app.use((_req, res, next) => {
 });
 
 // global error handler
-app.use((error: Error, _req: Request, res: Response, next: NextFunction) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  sendJSON(false, res, statusCode, error.message);
-});
+app.use(errorHandler);
 
 export default app;
