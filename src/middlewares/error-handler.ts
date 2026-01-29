@@ -54,12 +54,19 @@ export const errorHandler = (
     message = "Failed to initialize database connection.";
   }
 
+  // http-errors handling (from http-errors library)
+  if ((err as any).statusCode) {
+    statusCode = (err as any).statusCode;
+    message = err.message || message;
+  }
+
   // generic error handling
   if (
     !(err instanceof Prisma.PrismaClientKnownRequestError) &&
     !(err instanceof Prisma.PrismaClientValidationError) &&
     !(err instanceof Prisma.PrismaClientUnknownRequestError) &&
-    !(err instanceof Prisma.PrismaClientInitializationError)
+    !(err instanceof Prisma.PrismaClientInitializationError) &&
+    !(err as any).statusCode
   ) {
     message = err.message || message;
   }

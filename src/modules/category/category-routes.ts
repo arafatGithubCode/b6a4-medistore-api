@@ -4,7 +4,7 @@ import { categoryControllers } from "./category-controllers";
 
 const router = Router();
 
-//POST:api/v1/category -> create a new category
+//POST:api/v1/category -> create a new category || Admin Only
 router.post(
   "/",
   proxy("category", "create"),

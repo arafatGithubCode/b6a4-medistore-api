@@ -19,7 +19,11 @@ export const proxy = (resource: Resource, action: Action) => {
       const hasPermission = await auth.api.userHasPermission({
         body: {
           userId: session?.user.id,
-          role: session?.user.role || ("CUSTOMER" as any),
+          role: session?.user.role as
+            | "ADMIN"
+            | "CUSTOMER"
+            | "SELLER"
+            | undefined,
           permission: { [resource]: [action] },
         },
       });

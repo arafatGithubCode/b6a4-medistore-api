@@ -20,6 +20,14 @@ const createCategory = async (
   }
 };
 
+// const getCategoryBySlug = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const
+//     } catch (error) {
+
+//     }
+// }
+
 export const categoryControllers = {
   createCategory,
 };

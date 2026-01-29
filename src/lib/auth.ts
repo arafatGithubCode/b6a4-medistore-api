@@ -48,9 +48,9 @@ export const auth = betterAuth({
       adminRoles: [Role.ADMIN, Role.SELLER, Role.CUSTOMER],
       defaultAdminRole: Role.CUSTOMER,
       roles: {
-        admin: adminRole,
-        customer: customerRole,
-        seller: sellerRole,
+        ADMIN: adminRole,
+        CUSTOMER: customerRole,
+        SELLER: sellerRole,
       },
     }),
   ],
