@@ -33,6 +33,7 @@ export const errorHandler = (
       default:
         statusCode = 400;
         message = "Database error";
+        console.error("Prisma Error:", err.message);
     }
   }
 

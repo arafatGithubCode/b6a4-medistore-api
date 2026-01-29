@@ -1,11 +1,18 @@
 import { NextFunction, Request, Response } from "express";
+import { Role } from "../../generated/prisma/enums";
 import { sendJSON } from "../helpers/send-json";
 import { auth } from "../lib/auth";
+import { User } from "../../generated/prisma/client";
 
-export type Resource = "user" | "medicine" | "order" | "review" | "category";
-export type Action = "create" | "read" | "update" | "delete";
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
 
-export const proxy = (resource: Resource, action: Action) => {
+export const proxy = (roles: Role[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const session = await auth.api.getSession({
@@ -16,21 +23,19 @@ export const proxy = (resource: Resource, action: Action) => {
         sendJSON(false, res, 401, "Unauthorized");
       }
 
-      const hasPermission = await auth.api.userHasPermission({
-        body: {
-          userId: session?.user.id,
-          role: session?.user.role as
-            | "ADMIN"
-            | "CUSTOMER"
-            | "SELLER"
-            | undefined,
-          permission: { [resource]: [action] },
-        },
-      });
+      // set the user in request object
+      req.user = {
+        ...session!.user,
+        banned: null,
+        banReason: null,
+        banExpires: null,
+      } as User;
 
-      if (!hasPermission || !hasPermission.success) {
-        sendJSON(false, res, 403, "Forbidden");
+      // check for roles
+      if (roles.length && !roles.includes(req.user.role)) {
+        sendJSON(false, res, 403, "Forbidden: Insufficient permissions");
       }
+
       next();
     } catch (error) {
       next(error);

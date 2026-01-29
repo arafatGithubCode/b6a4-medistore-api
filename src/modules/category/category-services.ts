@@ -3,7 +3,7 @@ import { Category } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createCategory = async (payload: Category) => {
-  const isExist = await prisma.category.findUniqueOrThrow({
+  const isExist = await prisma.category.findUnique({
     where: { slug: payload.slug },
   });
 
