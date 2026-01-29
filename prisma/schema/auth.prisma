@@ -10,7 +10,10 @@ model User {
     email         String
     emailVerified Boolean   @default(false)
     image         String?
-    role          Role      @default(CUSTOMER)
+    role          String?
+    banned        Boolean?  @default(false)
+    banReason     String?
+    banExpires    DateTime?
     dob           DateTime?
     phone         String?   @default("")
     address       String?   @default("") @db.Text

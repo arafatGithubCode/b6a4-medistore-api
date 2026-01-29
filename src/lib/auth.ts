@@ -1,10 +1,13 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { admin } from "better-auth/plugins";
+import { Role } from "../../generated/prisma/enums";
 import {
   BETTER_AUTH_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
 } from "../config/env";
+import { adminRole, customerRole, sellerRole } from "../config/permissions";
 import { prisma } from "./prisma";
 
 export const auth = betterAuth({
@@ -24,11 +27,6 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      role: {
-        type: "string",
-        required: false,
-        defaultValue: "CUSTOMER",
-      },
       dob: {
         type: "date",
         required: false,
@@ -45,4 +43,15 @@ export const auth = betterAuth({
       },
     },
   },
+  plugins: [
+    admin({
+      adminRoles: [Role.ADMIN, Role.SELLER, Role.CUSTOMER],
+      defaultAdminRole: Role.CUSTOMER,
+      roles: {
+        admin: adminRole,
+        customer: customerRole,
+        seller: sellerRole,
+      },
+    }),
+  ],
 });

@@ -9,7 +9,6 @@ const seedAdmin = async () => {
       name: "Admin User",
       email: "admin@medistore.com",
       password: "Admin@1234",
-      role: Role.ADMIN,
     };
 
     // check if admin user already exists
@@ -22,7 +21,7 @@ const seedAdmin = async () => {
       throw error;
     }
 
-    // create admin user
+    // create admin user (without role - better-auth doesn't allow setting role during signup)
     const response = await fetch(`${BETTER_AUTH_URL}/api/auth/sign-up/email`, {
       method: "POST",
       headers: {
@@ -41,10 +40,10 @@ const seedAdmin = async () => {
       throw error;
     }
 
-    // update emailVerified to true
+    // update emailVerified to true and set role to ADMIN
     await prisma.user.update({
       where: { email: adminData.email },
-      data: { emailVerified: true },
+      data: { emailVerified: true, role: Role.ADMIN },
     });
 
     console.log("Admin user created and email verified.");
