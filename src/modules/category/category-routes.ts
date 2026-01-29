@@ -11,4 +11,24 @@ router.post(
   categoryControllers.createCategory,
 );
 
+//GET:api/v1/category/:slug -> get category by slug || Public
+router.get("/:slug", categoryControllers.getCategoryBySlug);
+
+//GET:api/v1/category/id/:id -> get category by id || Public
+router.get("/id/:id", categoryControllers.getCategoryById);
+
+// PUT:api/v1/category/:id -> update category by id || Admin Only
+router.put(
+  "/:id",
+  proxy("category", "update"),
+  categoryControllers.updateCategoryById,
+);
+
+// DELETE:api/v1/category/:id -> delete
+router.delete(
+  "/:id",
+  proxy("category", "delete"),
+  categoryControllers.deleteCategoryById,
+);
+
 export const categoryRoutes = router;
