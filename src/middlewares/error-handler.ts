@@ -39,6 +39,7 @@ export const errorHandler = (
 
   // prismaClientValidationError handling
   if (err instanceof Prisma.PrismaClientValidationError) {
+    console.error("Prisma Validation Error:", err.message);
     statusCode = 400;
     message = "You provided incorrect field type or missing required field.";
   }
