@@ -27,11 +27,27 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     const result = await orderServices.createOrder(payload);
     res.status(201).json({ message: "Order created successfully", result });
   } catch (error) {
-    console.error("Error in createOrder:", error);
+    next(error);
+  }
+};
+
+const cancelOrder = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const orderId = req.params.orderId;
+    if (!orderId) {
+      throw createError(400, "Bad Request: Order ID is missing");
+    }
+    if (typeof orderId !== "string") {
+      throw createError(400, "Bad Request: Order ID must be a string");
+    }
+    const result = await orderServices.cancelOrder(orderId);
+    res.status(200).json({ message: "Order cancelled successfully", result });
+  } catch (error) {
     next(error);
   }
 };
 
 export const orderControllers = {
   createOrder,
+  cancelOrder,
 };
