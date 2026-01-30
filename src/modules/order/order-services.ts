@@ -62,6 +62,22 @@ const updateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
   });
 };
 
+const cancelOrderStatus = async (orderId: string) => {
+  const order = await prisma.order.findUniqueOrThrow({
+    where: { id: orderId },
+  });
+
+  // Only allow cancellation if the order is in PLACED status
+  if (order.status !== OrderStatus.PLACED) {
+    throw createError(400, "Only orders in PLACED status can be cancelled");
+  }
+
+  return prisma.order.update({
+    where: { id: orderId },
+    data: { status: OrderStatus.CANCELLED },
+  });
+};
+
 const getOrderById = async (id: string) => {
   const result = await prisma.order.findUniqueOrThrow({
     where: { id },
@@ -120,4 +136,5 @@ export const orderServices = {
   getOrderById,
   getOrdersByUserId,
   updateOrderStatus,
+  cancelOrderStatus,
 };

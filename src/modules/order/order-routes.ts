@@ -14,6 +14,13 @@ router.patch(
   orderControllers.updateOrderStatus,
 );
 
+//PATCH:api/v1/orders/:orderId/cancel -> cancel order status || customer
+router.patch(
+  "/:orderId/cancel",
+  proxy(["CUSTOMER"]),
+  orderControllers.cancelOrderStatus,
+);
+
 //GET:api/v1/orders/:orderId -> get order by id || customer, seller & admin
 router.get(
   "/:orderId",
