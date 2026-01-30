@@ -8,7 +8,7 @@ model Medicine {
     unit        Unit
     strength    String         @db.VarChar(100)
     stock       Int
-    price       Decimal        @db.Decimal(10, 2)
+    price       Int
     image       String         @db.VarChar(255)
     status      MedicineStatus @default(AVAILABLE)
     isOTCOnly   Boolean        @default(false)
@@ -18,10 +18,10 @@ model Medicine {
     sellerId String
     seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
-    categoryId String      @db.Uuid
-    category   Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+    categoryId String   @db.Uuid
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
     reviews    Review[]
-    orders     OrderItem[]
+    orders     Order[]
 
     @@index([sellerId, categoryId])
     @@map("medicine")
