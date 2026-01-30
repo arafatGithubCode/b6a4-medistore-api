@@ -21,4 +21,11 @@ router.patch(
   orderControllers.confirmedOrder,
 );
 
+//GET:api/v1/orders/:orderId -> get order by id || customer, seller & admin
+router.get(
+  "/:orderId",
+  proxy(["CUSTOMER", "SELLER", "ADMIN"]),
+  orderControllers.getOrderById,
+);
+
 export const orderRoutes = router;

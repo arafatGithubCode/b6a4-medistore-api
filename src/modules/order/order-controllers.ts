@@ -67,8 +67,29 @@ const confirmedOrder = async (
   }
 };
 
+const getOrderById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const orderId = req.params.orderId;
+    if (!orderId) {
+      throw createError(400, "Bad Request: Order ID is missing");
+    }
+    if (typeof orderId !== "string") {
+      throw createError(400, "Bad Request: Order ID must be a string");
+    }
+    const result = await orderServices.getOrderById(orderId);
+    res.status(200).json({ message: "Order fetched successfully", result });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const orderControllers = {
   createOrder,
   cancelOrder,
   confirmedOrder,
+  getOrderById,
 };

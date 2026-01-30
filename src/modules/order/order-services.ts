@@ -87,8 +87,16 @@ const confirmedOrder = async (id: string) => {
   return result;
 };
 
+const getOrderById = async (id: string) => {
+  const result = await prisma.order.findUniqueOrThrow({
+    where: { id },
+  });
+  return result;
+};
+
 export const orderServices = {
   createOrder,
   cancelOrder,
   confirmedOrder,
+  getOrderById,
 };
