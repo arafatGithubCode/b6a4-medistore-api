@@ -33,60 +33,33 @@ const createOrder = async (payload: Order) => {
   return result;
 };
 
-const cancelOrder = async (id: string) => {
-  // check order existence
+const updateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
+  // Fetch the current order
   const order = await prisma.order.findUniqueOrThrow({
-    where: { id },
+    where: { id: orderId },
   });
 
-  // check if the order is not placed
-  if (order.status !== OrderStatus.PLACED) {
-    throw createError(400, "Only placed orders can be cancelled");
+  // Validate state transitions
+  const validTransitions: Record<OrderStatus, OrderStatus[]> = {
+    [OrderStatus.PLACED]: [OrderStatus.CONFIRMED, OrderStatus.CANCELLED],
+    [OrderStatus.CONFIRMED]: [OrderStatus.PROCESSING, OrderStatus.CANCELLED],
+    [OrderStatus.PROCESSING]: [OrderStatus.SHIPPED],
+    [OrderStatus.SHIPPED]: [OrderStatus.DELIVERED],
+    [OrderStatus.DELIVERED]: [],
+    [OrderStatus.CANCELLED]: [],
+  };
+
+  if (!validTransitions[order.status]?.includes(newStatus)) {
+    throw createError(
+      400,
+      `Cannot transition from ${order.status} to ${newStatus}`,
+    );
   }
 
-  const result = await prisma.$transaction(async (tx) => {
-    // restore the ordered quantity back to medicine stock
-    await tx.medicine.update({
-      where: { id: order.medicineId },
-      data: { stock: { increment: order.quantity } },
-    });
-    // update the order status to cancelled
-    return await tx.order.update({
-      where: { id },
-      data: { status: OrderStatus.CANCELLED },
-    });
+  return prisma.order.update({
+    where: { id: orderId },
+    data: { status: newStatus },
   });
-
-  return result;
-};
-
-const confirmedOrder = async (id: string) => {
-  // check order existence
-  const order = await prisma.order.findUniqueOrThrow({
-    where: { id },
-  });
-
-  // check if the order is already confirmed
-  if (order.status === OrderStatus.CONFIRMED) {
-    throw createError(400, "Order is already confirmed");
-  }
-
-  // check if the order is cancelled
-  if (order.status === OrderStatus.CANCELLED) {
-    throw createError(400, "Cancelled orders cannot be confirmed");
-  }
-
-  // check if the order is not placed
-  if (order.status !== OrderStatus.PLACED) {
-    throw createError(400, "Only placed orders can be confirmed");
-  }
-
-  const result = await prisma.order.update({
-    where: { id },
-    data: { status: OrderStatus.CONFIRMED },
-  });
-
-  return result;
 };
 
 const getOrderById = async (id: string) => {
@@ -144,8 +117,7 @@ const getOrdersByUserId = async ({
 
 export const orderServices = {
   createOrder,
-  cancelOrder,
-  confirmedOrder,
   getOrderById,
   getOrdersByUserId,
+  updateOrderStatus,
 };

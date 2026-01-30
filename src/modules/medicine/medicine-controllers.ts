@@ -28,8 +28,8 @@ const createMedicine = async (
       throw createError(403, "Sellers can only create OTC medicines");
     }
 
-    const result = await medicineServices.createMedicine(payload);
-    sendJSON(true, res, 201, "Medicine created successfully", result);
+    const data = await medicineServices.createMedicine(payload);
+    sendJSON(true, res, 201, "Medicine created successfully", data);
   } catch (error) {
     next(error);
   }
@@ -62,11 +62,8 @@ const updateMedicineById = async (
       delete payload.sellerId;
     }
 
-    const result = await medicineServices.updateMedicineById(
-      medicineId,
-      payload,
-    );
-    sendJSON(true, res, 200, "Medicine updated successfully", result);
+    const data = await medicineServices.updateMedicineById(medicineId, payload);
+    sendJSON(true, res, 200, "Medicine updated successfully", data);
   } catch (error) {
     next(error);
   }
@@ -85,8 +82,8 @@ const getMedicineById = async (
     if (typeof medicineId !== "string") {
       throw createError(400, "Medicine ID must be a string");
     }
-    const result = await medicineServices.getMedicineById(medicineId);
-    sendJSON(true, res, 200, "Medicine fetched successfully", result);
+    const data = await medicineServices.getMedicineById(medicineId);
+    sendJSON(true, res, 200, "Medicine fetched successfully", data);
   } catch (error) {
     next(error);
   }

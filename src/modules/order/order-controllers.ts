@@ -25,30 +25,14 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     payload.userId = userId;
     payload.medicineId = medicineId;
 
-    const result = await orderServices.createOrder(payload);
-    res.status(201).json({ message: "Order created successfully", result });
+    const data = await orderServices.createOrder(payload);
+    res.status(201).json({ message: "Order created successfully", data });
   } catch (error) {
     next(error);
   }
 };
 
-const cancelOrder = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const orderId = req.params.orderId;
-    if (!orderId) {
-      throw createError(400, "Bad Request: Order ID is missing");
-    }
-    if (typeof orderId !== "string") {
-      throw createError(400, "Bad Request: Order ID must be a string");
-    }
-    const result = await orderServices.cancelOrder(orderId);
-    res.status(200).json({ message: "Order cancelled successfully", result });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const confirmedOrder = async (
+const updateOrderStatus = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -61,8 +45,18 @@ const confirmedOrder = async (
     if (typeof orderId !== "string") {
       throw createError(400, "Bad Request: Order ID must be a string");
     }
-    const result = await orderServices.confirmedOrder(orderId);
-    res.status(200).json({ message: "Order confirmed successfully", result });
+    const { status } = req.body;
+
+    // check valid status
+    const validStatuses = Object.values(OrderStatus);
+    if (!validStatuses.includes(status)) {
+      throw createError(400, "Bad Request: Invalid order status");
+    }
+
+    const data = await orderServices.updateOrderStatus(orderId, status);
+    res
+      .status(200)
+      .json({ message: "Order status updated successfully", data });
   } catch (error) {
     next(error);
   }
@@ -81,8 +75,8 @@ const getOrderById = async (
     if (typeof orderId !== "string") {
       throw createError(400, "Bad Request: Order ID must be a string");
     }
-    const result = await orderServices.getOrderById(orderId);
-    res.status(200).json({ message: "Order fetched successfully", result });
+    const data = await orderServices.getOrderById(orderId);
+    res.status(200).json({ message: "Order fetched successfully", data });
   } catch (error) {
     next(error);
   }
@@ -125,8 +119,7 @@ const getOrdersByUserId = async (
 
 export const orderControllers = {
   createOrder,
-  cancelOrder,
-  confirmedOrder,
   getOrderById,
   getOrdersByUserId,
+  updateOrderStatus,
 };
