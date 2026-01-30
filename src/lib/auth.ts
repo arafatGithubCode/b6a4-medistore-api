@@ -1,5 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { createAuthMiddleware } from "better-auth/api";
+import createError from "http-errors";
 import { Role } from "../../generated/prisma/enums";
 import {
   BETTER_AUTH_URL,
@@ -45,5 +47,21 @@ export const auth = betterAuth({
         defaultValue: "",
       },
     },
+  },
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      const { body, path } = ctx;
+
+      if (path === "/sign-up/email") {
+        // prevent admins from being created via signup
+        if (body.role && body.role === Role.ADMIN) {
+          throw createError(400, "Invalid role for signup");
+        }
+        // allow only CUSTOMER | SELLER role during signup
+        if (body.role && ![Role.CUSTOMER, Role.SELLER].includes(body.role)) {
+          throw createError(400, "Invalid role for signup");
+        }
+      }
+    }),
   },
 });
