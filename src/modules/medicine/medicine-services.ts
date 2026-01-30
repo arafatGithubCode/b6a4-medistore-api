@@ -127,9 +127,21 @@ const getAllMedicines = async ({
   };
 };
 
+const deleteMedicineById = async (id: string) => {
+  // check if the medicine exists
+  await prisma.medicine.findUniqueOrThrow({
+    where: { id },
+  });
+
+  await prisma.medicine.delete({
+    where: { id },
+  });
+};
+
 export const medicineServices = {
   createMedicine,
   updateMedicineById,
   getMedicineById,
   getAllMedicines,
+  deleteMedicineById,
 };

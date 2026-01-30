@@ -24,4 +24,11 @@ router.get("/", medicineControllers.getAllMedicines);
 //GET:api/v1/medicine/:id -> get medicine by id || public
 router.get("/:id", medicineControllers.getMedicineById);
 
+//DELETE:api/v1/medicine/:id -> delete medicine by id || seller & admin
+router.delete(
+  "/:id",
+  proxy(["SELLER", "ADMIN"]),
+  medicineControllers.deleteMedicineById,
+);
+
 export const medicineRoutes = router;

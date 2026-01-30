@@ -126,9 +126,30 @@ const getAllMedicines = async (
   }
 };
 
+const deleteMedicineById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const medicineId = req.params.id;
+    if (!medicineId) {
+      throw createError(400, "Medicine ID is required");
+    }
+    if (typeof medicineId !== "string") {
+      throw createError(400, "Medicine ID must be a string");
+    }
+    await medicineServices.deleteMedicineById(medicineId);
+    sendJSON(true, res, 200, "Medicine deleted successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const medicineControllers = {
   createMedicine,
   updateMedicineById,
   getMedicineById,
   getAllMedicines,
+  deleteMedicineById,
 };
