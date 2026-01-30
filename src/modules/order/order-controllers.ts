@@ -88,27 +88,27 @@ const getOrderById = async (
   }
 };
 
-const getOrdersByCustomerId = async (
+const getOrdersByUserId = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const { page, limit, sortBy, sortOrder, skip } = paginationSort(req.query);
-    const customerId = req.params.customerId;
+    const userId = req.user?.id;
 
-    if (!customerId) {
-      throw createError(400, "Bad Request: Customer ID is missing");
+    if (!userId) {
+      throw createError(400, "Bad Request: User ID is missing");
     }
-    if (typeof customerId !== "string") {
-      throw createError(400, "Bad Request: Customer ID must be a string");
+    if (typeof userId !== "string") {
+      throw createError(400, "Bad Request: User ID must be a string");
     }
 
     const status = req.query.status as OrderStatus | undefined;
 
-    const { data, pagination } = await orderServices.getOrdersByCustomerId({
+    const { data, pagination } = await orderServices.getOrdersByUserId({
       status,
-      customerId,
+      userId,
       page,
       limit,
       sortBy,
@@ -128,5 +128,5 @@ export const orderControllers = {
   cancelOrder,
   confirmedOrder,
   getOrderById,
-  getOrdersByCustomerId,
+  getOrdersByUserId,
 };

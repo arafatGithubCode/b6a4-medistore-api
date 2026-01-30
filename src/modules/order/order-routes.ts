@@ -28,11 +28,11 @@ router.get(
   orderControllers.getOrderById,
 );
 
-//GET:api/v1/orders/customer/:customerId -> get orders by customer id || customer & admin
+//GET:api/v1/orders/-> get orders by current user id || customer & admin & seller
 router.get(
-  "/customer/:customerId",
-  proxy(["CUSTOMER", "ADMIN"]),
-  orderControllers.getOrdersByCustomerId,
+  "/",
+  proxy(["CUSTOMER", "ADMIN", "SELLER"]),
+  orderControllers.getOrdersByUserId,
 );
 
 export const orderRoutes = router;

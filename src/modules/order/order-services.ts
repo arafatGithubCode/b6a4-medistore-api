@@ -96,9 +96,9 @@ const getOrderById = async (id: string) => {
   return result;
 };
 
-const getOrdersByCustomerId = async ({
+const getOrdersByUserId = async ({
   status,
-  customerId,
+  userId,
   page,
   limit,
   sortBy,
@@ -106,9 +106,9 @@ const getOrdersByCustomerId = async ({
   skip,
 }: PaginationOptions & {
   status: OrderStatus | undefined;
-  customerId: string;
+  userId: string;
 }) => {
-  const andClauses: OrderWhereInput[] = [{ userId: customerId }];
+  const andClauses: OrderWhereInput[] = [{ userId }];
 
   if (status) {
     andClauses.push({ status });
@@ -147,5 +147,5 @@ export const orderServices = {
   cancelOrder,
   confirmedOrder,
   getOrderById,
-  getOrdersByCustomerId,
+  getOrdersByUserId,
 };
