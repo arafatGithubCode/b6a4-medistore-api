@@ -5,4 +5,9 @@ export interface FilterOptions {
   status: MedicineStatus | undefined;
   categoryId: string | undefined;
   id: string | undefined;
+  page: number;
+  limit: number;
+  skip: number;
+  sortBy: string;
+  sortOrder: string;
 }

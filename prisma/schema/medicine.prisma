@@ -11,6 +11,7 @@ model Medicine {
     price       Decimal        @db.Decimal(10, 2)
     image       String         @db.VarChar(255)
     status      MedicineStatus @default(AVAILABLE)
+    isOTCOnly   Boolean        @default(false)
     createdAt   DateTime       @default(now())
     updatedAt   DateTime       @updatedAt
 

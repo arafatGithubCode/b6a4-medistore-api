@@ -1,5 +1,7 @@
 import createError from "http-errors";
 import { Medicine, Prisma } from "../../../generated/prisma/client";
+
+import { MedicineWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 import { FilterOptions } from "../../types";
 
@@ -49,8 +51,13 @@ const getAllMedicines = async ({
   status,
   categoryId,
   id,
+  page,
+  limit,
+  skip,
+  sortBy,
+  sortOrder,
 }: FilterOptions) => {
-  const andClauses: Prisma.MedicineWhereInput[] = [];
+  const andClauses: MedicineWhereInput[] = [];
 
   if (searchTerm) {
     andClauses.push({
@@ -63,6 +70,12 @@ const getAllMedicines = async ({
         },
         {
           description: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          brand: {
             contains: searchTerm,
             mode: "insensitive",
           },
@@ -88,11 +101,30 @@ const getAllMedicines = async ({
   }
   const result = await prisma.medicine.findMany({
     where: {
-      AND: andClauses.length > 0 ? andClauses : undefined,
+      AND: andClauses,
+    },
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder as Prisma.SortOrder,
     },
   });
 
-  return result;
+  const total = await prisma.medicine.count({
+    where: {
+      AND: andClauses,
+    },
+  });
+
+  return {
+    data: result,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 };
 
 export const medicineServices = {

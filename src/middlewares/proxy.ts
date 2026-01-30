@@ -1,16 +1,8 @@
 import { NextFunction, Request, Response } from "express";
+import { User } from "../../generated/prisma/client";
 import { Role } from "../../generated/prisma/enums";
 import { sendJSON } from "../helpers/send-json";
 import { auth } from "../lib/auth";
-import { User } from "../../generated/prisma/client";
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-    }
-  }
-}
 
 export const proxy = (roles: Role[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {

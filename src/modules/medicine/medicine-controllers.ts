@@ -3,6 +3,7 @@ import createError from "http-errors";
 import { Medicine } from "../../../generated/prisma/client";
 import { filter } from "../../helpers/filter";
 import { getSlug } from "../../helpers/get-slug";
+import { paginationSort } from "../../helpers/pagination-sort";
 import { sendJSON } from "./../../helpers/send-json";
 import { medicineServices } from "./medicine-services";
 
@@ -21,6 +22,11 @@ const createMedicine = async (
     }
 
     payload.sellerId = req.user.id;
+
+    // allow only otc only medicines for sellers
+    if (payload.isOTCOnly !== true) {
+      throw createError(403, "Sellers can only create OTC medicines");
+    }
 
     const result = await medicineServices.createMedicine(payload);
     sendJSON(true, res, 201, "Medicine created successfully", result);
@@ -93,15 +99,28 @@ const getAllMedicines = async (
 ) => {
   try {
     const { searchTerm, status, categoryId, id } = filter(req.query);
+    const { page, limit, skip, sortBy, sortOrder } = paginationSort(req.query);
 
-    const result = await medicineServices.getAllMedicines({
+    const { data, pagination } = await medicineServices.getAllMedicines({
       searchTerm,
       status,
       categoryId,
       id,
+      page,
+      limit,
+      skip,
+      sortBy,
+      sortOrder,
     });
-    console.log(result);
-    sendJSON(true, res, 200, "Medicines fetched successfully", result);
+
+    sendJSON(
+      true,
+      res,
+      200,
+      "Medicines fetched successfully",
+      data,
+      pagination,
+    );
   } catch (error) {
     next(error);
   }
