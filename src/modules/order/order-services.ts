@@ -58,7 +58,37 @@ const cancelOrder = async (id: string) => {
   return result;
 };
 
+const confirmedOrder = async (id: string) => {
+  // check order existence
+  const order = await prisma.order.findUniqueOrThrow({
+    where: { id },
+  });
+
+  // check if the order is already confirmed
+  if (order.status === OrderStatus.CONFIRMED) {
+    throw createError(400, "Order is already confirmed");
+  }
+
+  // check if the order is cancelled
+  if (order.status === OrderStatus.CANCELLED) {
+    throw createError(400, "Cancelled orders cannot be confirmed");
+  }
+
+  // check if the order is not placed
+  if (order.status !== OrderStatus.PLACED) {
+    throw createError(400, "Only placed orders can be confirmed");
+  }
+
+  const result = await prisma.order.update({
+    where: { id },
+    data: { status: OrderStatus.CONFIRMED },
+  });
+
+  return result;
+};
+
 export const orderServices = {
   createOrder,
   cancelOrder,
+  confirmedOrder,
 };
