@@ -1,6 +1,8 @@
 import createError from "http-errors";
-import { Order, OrderStatus } from "../../../generated/prisma/client";
+import { Order, OrderStatus, Prisma } from "../../../generated/prisma/client";
+import { OrderWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
+import { PaginationOptions } from "../../types";
 
 const createOrder = async (payload: Order) => {
   const medicine = await prisma.medicine.findUniqueOrThrow({
@@ -94,9 +96,56 @@ const getOrderById = async (id: string) => {
   return result;
 };
 
+const getOrdersByCustomerId = async ({
+  status,
+  customerId,
+  page,
+  limit,
+  sortBy,
+  sortOrder,
+  skip,
+}: PaginationOptions & {
+  status: OrderStatus | undefined;
+  customerId: string;
+}) => {
+  const andClauses: OrderWhereInput[] = [{ userId: customerId }];
+
+  if (status) {
+    andClauses.push({ status });
+  }
+
+  const result = await prisma.order.findMany({
+    where: {
+      AND: andClauses,
+    },
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder as Prisma.SortOrder,
+    },
+  });
+
+  const total = await prisma.order.count({
+    where: {
+      AND: andClauses,
+    },
+  });
+
+  return {
+    data: result,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
 export const orderServices = {
   createOrder,
   cancelOrder,
   confirmedOrder,
   getOrderById,
+  getOrdersByCustomerId,
 };

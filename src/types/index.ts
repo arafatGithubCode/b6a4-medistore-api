@@ -11,3 +11,11 @@ export interface FilterOptions {
   sortBy: string;
   sortOrder: string;
 }
+
+export interface PaginationOptions {
+  page: number;
+  limit: number;
+  skip: number;
+  sortBy: string;
+  sortOrder: string;
+}

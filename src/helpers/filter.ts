@@ -18,6 +18,7 @@ export const filter = (query: ParsedQs) => {
 
   const categoryId =
     typeof query.categoryId === "string" ? query.categoryId : undefined;
+
   const id = typeof query.id === "string" ? query.id : undefined;
 
   return { searchTerm, status, categoryId, id };

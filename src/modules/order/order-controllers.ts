@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
-import { Order } from "../../../generated/prisma/client";
+import { Order, OrderStatus } from "../../../generated/prisma/client";
+import { paginationSort } from "../../helpers/pagination-sort";
 import { orderServices } from "./order-services";
 
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
@@ -87,9 +88,45 @@ const getOrderById = async (
   }
 };
 
+const getOrdersByCustomerId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { page, limit, sortBy, sortOrder, skip } = paginationSort(req.query);
+    const customerId = req.params.customerId;
+
+    if (!customerId) {
+      throw createError(400, "Bad Request: Customer ID is missing");
+    }
+    if (typeof customerId !== "string") {
+      throw createError(400, "Bad Request: Customer ID must be a string");
+    }
+
+    const status = req.query.status as OrderStatus | undefined;
+
+    const { data, pagination } = await orderServices.getOrdersByCustomerId({
+      status,
+      customerId,
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      skip,
+    });
+    res
+      .status(200)
+      .json({ message: "Orders fetched successfully", data, pagination });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const orderControllers = {
   createOrder,
   cancelOrder,
   confirmedOrder,
   getOrderById,
+  getOrdersByCustomerId,
 };
