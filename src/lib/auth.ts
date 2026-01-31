@@ -1,13 +1,13 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { createAuthMiddleware } from "better-auth/api";
-import createError from "http-errors";
+import { admin } from "better-auth/plugins";
 import { Role } from "../../generated/prisma/enums";
 import {
   BETTER_AUTH_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
 } from "../config/env";
+import { adminRole, customerRole, sellerRole } from "../config/permission";
 import { prisma } from "./prisma";
 
 export const auth = betterAuth({
@@ -30,7 +30,7 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: true,
-        defaultValue: Role.CUSTOMER,
+        defaultValue: "user",
       },
       dob: {
         type: "date",
@@ -48,20 +48,51 @@ export const auth = betterAuth({
       },
     },
   },
-  hooks: {
-    before: createAuthMiddleware(async (ctx) => {
-      const { body, path } = ctx;
-
-      if (path === "/sign-up/email") {
-        // prevent admins from being created via signup
-        if (body.role && body.role === Role.ADMIN) {
-          throw createError(400, "Invalid role for signup");
-        }
-        // allow only CUSTOMER | SELLER role during signup
-        if (body.role && ![Role.CUSTOMER, Role.SELLER].includes(body.role)) {
-          throw createError(400, "Invalid role for signup");
-        }
-      }
+  plugins: [
+    admin({
+      adminRoles: [Role.CUSTOMER, Role.SELLER, Role.ADMIN],
+      defaultRole: "user",
+      roles: {
+        [Role.ADMIN]: adminRole,
+        [Role.SELLER]: sellerRole,
+        [Role.CUSTOMER]: customerRole,
+      },
     }),
-  },
+  ],
+  //   hooks: {
+  //     before: createAuthMiddleware(async (ctx) => {
+  //       const { body, path } = ctx;
+
+  //       if (path === "/sign-up/email") {
+  //         // prevent admins from being created via signup
+  //         if (body.role && body.role === Role.ADMIN) {
+  //           throw createError(400, "Invalid role for signup");
+  //         }
+  //         // allow only CUSTOMER | SELLER role during signup
+  //         if (body.role && ![Role.CUSTOMER, Role.SELLER].includes(body.role)) {
+  //           throw createError(400, "Invalid role for signup");
+  //         }
+  //       }
+  //     }),
+  //     after: createAuthMiddleware(async (ctx) => {
+  //       const { path, body } = ctx;
+
+  //       // update role immediately after signup
+  //       if (path === "/sign-up/email") {
+  //         // force role to CUSTOMER | SELLER only
+  //         if (![Role.CUSTOMER, Role.SELLER].includes(body.role)) {
+  //           body.role = Role.CUSTOMER;
+  //         }
+
+  //         await prisma.user.update({
+  //           where: {
+  //             email: body.email,
+  //           },
+  //           data: {
+  //             role: body.role,
+  //           },
+  //         });
+  //       }
+  //     }),
+  //   },
 });

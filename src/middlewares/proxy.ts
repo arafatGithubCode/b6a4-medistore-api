@@ -4,7 +4,10 @@ import { Role } from "../../generated/prisma/enums";
 import { sendJSON } from "../helpers/send-json";
 import { auth } from "../lib/auth";
 
-export const proxy = (roles: Role[]) => {
+export type resource = "user" | "medicine" | "order" | "category" | "review";
+export type action = "create" | "read" | "update" | "delete";
+
+export const proxy = (resource: resource, action: action) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const session = await auth.api.getSession({
@@ -15,17 +18,20 @@ export const proxy = (roles: Role[]) => {
         sendJSON(false, res, 401, "Unauthorized");
       }
 
-      // set the user in request object
-      req.user = {
-        ...session!.user,
-        banned: null,
-        banReason: null,
-        banExpires: null,
-      } as User;
+      // attache user to req object
+      req.user = session?.user as User;
 
-      // check for roles
-      if (roles.length && !roles.includes(req.user.role)) {
-        sendJSON(false, res, 403, "Forbidden: Insufficient permissions");
+      // check permission
+      const hasPermission = await auth.api.userHasPermission({
+        body: {
+          userId: session?.user.id,
+          role: session?.user.role as Role,
+          permission: { [resource]: [action] },
+        },
+      });
+
+      if (!hasPermission || !hasPermission.success) {
+        sendJSON(false, res, 403, "Forbidden");
       }
 
       next();

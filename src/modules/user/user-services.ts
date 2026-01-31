@@ -1,4 +1,5 @@
 import { User } from "../../../generated/prisma/client";
+import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { PaginationOptions } from "../../types";
 
@@ -60,10 +61,41 @@ const updateUserById = async (
   return updatedUser;
 };
 
+const signup = async (payload: {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}) => {
+  const { role, name, email, password } = payload;
+
+  // create user by better-auth without role
+  const userWithoutRole = await auth.api.signUpEmail({
+    body: {
+      name,
+      email,
+      password,
+    },
+  });
+
+  console.log("User created without role:", userWithoutRole);
+
+  // update role using prisma
+  return await prisma.user.update({
+    where: {
+      id: userWithoutRole.user.id,
+    },
+    data: {
+      role,
+    },
+  });
+};
+
 export const userServices = {
   me,
   getAllUsers,
   getUserById,
   deleteUserById,
   updateUserById,
+  signup,
 };

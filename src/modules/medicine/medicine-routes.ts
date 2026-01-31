@@ -7,14 +7,14 @@ const router = Router();
 //POST:api/v1/medicine -> create a new medicine || seller & admin
 router.post(
   "/",
-  proxy(["SELLER", "ADMIN"]),
+  proxy("medicine", "create"),
   medicineControllers.createMedicine,
 );
 
 //PUT:api/v1/medicine/:id -> update a medicine || seller & admin
 router.put(
   "/:id",
-  proxy(["SELLER", "ADMIN"]),
+  proxy("medicine", "update"),
   medicineControllers.updateMedicineById,
 );
 
@@ -27,7 +27,7 @@ router.get("/:id", medicineControllers.getMedicineById);
 //DELETE:api/v1/medicine/:id -> delete medicine by id || seller & admin
 router.delete(
   "/:id",
-  proxy(["SELLER", "ADMIN"]),
+  proxy("medicine", "delete"),
   medicineControllers.deleteMedicineById,
 );
 

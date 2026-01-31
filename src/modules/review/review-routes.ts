@@ -10,14 +10,14 @@ router.get("/", reviewControllers.getAllReviews);
 //POST:api/v1/reviews/:medicineId || create a new review || customer
 router.post(
   "/:medicineId",
-  proxy(["CUSTOMER"]),
+  proxy("review", "create"),
   reviewControllers.createReview,
 );
 
 //PATCH:api/v1/reviews/:reviewId || update a review || customer & admin
 router.patch(
   "/:reviewId",
-  proxy(["CUSTOMER", "ADMIN"]),
+  proxy("review", "update"),
   reviewControllers.updateReview,
 );
 
@@ -27,7 +27,7 @@ router.get("/:reviewId", reviewControllers.getReviewById);
 // DELETE:api/v1/reviews/:reviewId || delete a review by ID || admin & customer
 router.delete(
   "/:reviewId",
-  proxy(["CUSTOMER", "ADMIN"]),
+  proxy("review", "delete"),
   reviewControllers.deleteReviewById,
 );
 

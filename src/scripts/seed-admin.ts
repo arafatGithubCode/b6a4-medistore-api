@@ -1,6 +1,6 @@
 import createError from "http-errors";
 import { Role } from "../../generated/prisma/client";
-import { BETTER_AUTH_URL } from "../config/env";
+import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
 const seedAdmin = async () => {
@@ -22,22 +22,16 @@ const seedAdmin = async () => {
     }
 
     // create admin user
-    const response = await fetch(`${BETTER_AUTH_URL}/api/auth/sign-up/email`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Origin: "http://localhost:8000",
+    const { user } = await auth.api.signUpEmail({
+      body: {
+        name: adminData.name,
+        email: adminData.email,
+        password: adminData.password,
       },
-      body: JSON.stringify(adminData),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      const error = createError(
-        response.status,
-        errorData.message || "Failed to create admin user",
-      );
-      throw error;
+    if (!user) {
+      throw createError(500, "Failed to create admin user");
     }
 
     // update emailVerified to true and role to ADMIN

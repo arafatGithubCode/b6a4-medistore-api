@@ -1,7 +1,34 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
+import { Role } from "../../../generated/prisma/enums";
 import { paginationSort } from "../../helpers/pagination-sort";
 import { userServices } from "./user-services";
+
+const signup = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, email, password, role } = req.body;
+    if (!name || !email || !password || !role) {
+      throw createError(400, "Bad Request: Missing required fields");
+    }
+
+    // make role uppercase to match enum
+    const roleUpper = role.toUpperCase();
+
+    // validate role
+    if (![Role.CUSTOMER, Role.SELLER].includes(roleUpper)) {
+      throw createError(400, "Bad Request: Invalid role");
+    }
+    const data = await userServices.signup({
+      name,
+      email,
+      password,
+      role: roleUpper,
+    });
+    res.status(201).json({ message: "User signed up successfully", data });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const me = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -106,6 +133,7 @@ const updateUserById = async (
 
 export const userControllers = {
   me,
+  signup,
   getAllUsers,
   getUserById,
   deleteUserById,
