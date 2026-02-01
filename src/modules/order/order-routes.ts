@@ -4,12 +4,8 @@ import { orderControllers } from "./order-controllers";
 
 const router = Router();
 
-//POST:api/v1/orders/:medicineId -> create a new order || customer
-router.post(
-  "/:medicineId",
-  proxy("order", "create"),
-  orderControllers.createOrder,
-);
+//POST:api/v1/orders -> create a new order || customer
+router.post("/", proxy("order", "create"), orderControllers.createOrder);
 
 //PATCH:api/v1/orders/:orderId/status -> update order status || admin & seller
 router.patch(

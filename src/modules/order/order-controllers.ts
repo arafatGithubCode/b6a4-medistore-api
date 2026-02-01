@@ -1,31 +1,31 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
-import { Order, OrderStatus } from "../../../generated/prisma/client";
+import { OrderStatus } from "../../../generated/prisma/client";
 import { paginationSort } from "../../helpers/pagination-sort";
+import { TOrderPayload } from "../../types";
 import { orderServices } from "./order-services";
 
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const payload: Order = req.body || {};
+    const payload: TOrderPayload = req.body || {};
     const userId = req.user?.id;
-    const medicineId = req.params.medicineId;
 
-    // check userId and medicineId existence
     if (!userId) {
       throw createError(401, "Unauthorized: User ID is missing");
     }
-    if (!medicineId) {
-      throw createError(400, "Bad Request: Medicine ID is missing");
+
+    if (
+      !payload.items ||
+      !Array.isArray(payload.items) ||
+      payload.items.length === 0
+    ) {
+      throw createError(
+        400,
+        "Bad Request: Order must include at least one item.",
+      );
     }
 
-    if (typeof medicineId !== "string") {
-      throw createError(400, "Bad Request: Medicine ID must be a string");
-    }
-
-    payload.userId = userId;
-    payload.medicineId = medicineId;
-
-    const data = await orderServices.createOrder(payload);
+    const data = await orderServices.createOrder(payload, userId);
     res.status(201).json({ message: "Order created successfully", data });
   } catch (error) {
     next(error);

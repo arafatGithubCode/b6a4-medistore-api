@@ -19,3 +19,10 @@ export interface PaginationOptions {
   sortBy: string;
   sortOrder: string;
 }
+
+export type TOrderPayload = {
+  items: {
+    medicineId: string;
+    quantity: number;
+  }[];
+};

@@ -78,8 +78,6 @@ const signup = async (payload: {
     },
   });
 
-  console.log("User created without role:", userWithoutRole);
-
   // update role using prisma
   return await prisma.user.update({
     where: {

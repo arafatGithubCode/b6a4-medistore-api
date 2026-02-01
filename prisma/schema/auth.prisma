@@ -25,6 +25,7 @@ model User {
     medicines Medicine[]
     reviews   Review[]
     orders    Order[]
+    cart      Cart?
 
     @@unique([email])
     @@map("user")
