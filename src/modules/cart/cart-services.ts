@@ -61,7 +61,13 @@ const getCurrentUserCart = async (
   const { page, limit, skip, sortBy, sortOrder } = pagination;
   const carts = await prisma.cart.findMany({
     where: { userId },
-    include: { items: true },
+    include: {
+      items: {
+        include: {
+          medicine: true,
+        },
+      },
+    },
     skip,
     take: limit,
     orderBy: {

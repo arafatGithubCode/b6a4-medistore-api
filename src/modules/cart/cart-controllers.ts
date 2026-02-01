@@ -17,7 +17,7 @@ const createCart = async (req: Request, res: Response, next: NextFunction) => {
 
     const payload: TCartPayload = req.body;
     const data = await cartServices.createCart(userId, payload);
-    sendJSON(true, res, 201, "Cart created/updated successfully", data, res);
+    sendJSON(true, res, 201, "Cart created/updated successfully", data);
   } catch (error) {
     next(error);
   }
