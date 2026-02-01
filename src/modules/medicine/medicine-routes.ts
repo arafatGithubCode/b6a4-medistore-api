@@ -4,7 +4,7 @@ import { medicineControllers } from "./medicine-controllers";
 
 const router = Router();
 
-//POST:api/v1/medicine -> create a new medicine || seller & admin
+//POST:api/v1/medicine/ -> create a new medicine || seller & admin
 router.post(
   "/",
   proxy("medicine", "create"),

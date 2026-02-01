@@ -26,3 +26,10 @@ export type TOrderPayload = {
     quantity: number;
   }[];
 };
+
+export type TCartPayload = {
+  items: {
+    medicineId: string;
+    quantity: number;
+  }[];
+};

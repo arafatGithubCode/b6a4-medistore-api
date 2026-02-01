@@ -6,6 +6,7 @@ export const statement = {
   order: ["create", "read", "update", "delete"],
   category: ["create", "read", "update", "delete"],
   review: ["create", "read", "update", "delete"],
+  cart: ["create", "read", "update", "delete"],
 } as const;
 
 const ac = createAccessControl(statement);
@@ -16,6 +17,7 @@ export const customerRole = ac.newRole({
   order: ["create", "read", "update", "delete"],
   category: ["read"],
   review: ["create", "read", "update", "delete"],
+  cart: ["create", "read", "update", "delete"],
 });
 
 export const sellerRole = ac.newRole({
@@ -32,4 +34,5 @@ export const adminRole = ac.newRole({
   order: ["create", "read", "update", "delete"],
   category: ["create", "read", "update", "delete"],
   review: ["create", "read", "update", "delete"],
+  cart: ["create", "read", "update", "delete"],
 });

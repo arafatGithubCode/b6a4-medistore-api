@@ -4,7 +4,13 @@ import { Role } from "../../generated/prisma/enums";
 import { sendJSON } from "../helpers/send-json";
 import { auth } from "../lib/auth";
 
-export type resource = "user" | "medicine" | "order" | "category" | "review";
+export type resource =
+  | "user"
+  | "medicine"
+  | "order"
+  | "category"
+  | "review"
+  | "cart";
 export type action = "create" | "read" | "update" | "delete";
 
 export const proxy = (resource: resource, action: action) => {
