@@ -41,6 +41,7 @@ const createOrder = async (payload: TOrderPayload, userId: string) => {
         items: {
           create: orderItemsData,
         },
+        shippingAddress: payload.shippingAddress,
       },
       include: {
         items: true,

@@ -1,4 +1,5 @@
 import { MedicineStatus } from "../../generated/prisma/enums";
+import { InputJsonObject } from "../../generated/prisma/internal/prismaNamespace";
 
 export interface FilterOptions {
   searchTerm: string | undefined;
@@ -25,6 +26,7 @@ export type TOrderPayload = {
     medicineId: string;
     quantity: number;
   }[];
+  shippingAddress: InputJsonObject;
 };
 
 export type TCartPayload = {
