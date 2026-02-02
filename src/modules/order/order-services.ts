@@ -42,6 +42,7 @@ const createOrder = async (payload: TOrderPayload, userId: string) => {
           create: orderItemsData,
         },
         shippingAddress: payload.shippingAddress,
+        paymentMethod: payload.paymentMethod,
       },
       include: {
         items: true,

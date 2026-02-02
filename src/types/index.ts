@@ -1,4 +1,4 @@
-import { MedicineStatus } from "../../generated/prisma/enums";
+import { MedicineStatus, PaymentMethod } from "../../generated/prisma/enums";
 import { InputJsonObject } from "../../generated/prisma/internal/prismaNamespace";
 
 export interface FilterOptions {
@@ -27,6 +27,7 @@ export type TOrderPayload = {
     quantity: number;
   }[];
   shippingAddress: InputJsonObject;
+  paymentMethod: PaymentMethod;
 };
 
 export type TCartPayload = {
