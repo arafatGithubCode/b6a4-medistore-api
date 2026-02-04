@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import { OrderStatus } from "../../../generated/prisma/client";
 import { paginationSort } from "../../helpers/pagination-sort";
+import { sendJSON } from "../../helpers/send-json";
 import { TOrderPayload } from "../../types";
 import { orderServices } from "./order-services";
 
@@ -26,7 +27,7 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const data = await orderServices.createOrder(payload, userId);
-    res.status(201).json({ message: "Order created successfully", data });
+    sendJSON(true, res, 201, "Order created successfully", data);
   } catch (error) {
     next(error);
   }
@@ -54,9 +55,7 @@ const updateOrderStatus = async (
     }
 
     const data = await orderServices.updateOrderStatus(orderId, status);
-    res
-      .status(200)
-      .json({ message: "Order status updated successfully", data });
+    sendJSON(true, res, 200, "Order status updated successfully", data);
   } catch (error) {
     next(error);
   }
@@ -76,7 +75,7 @@ const getOrderById = async (
       throw createError(400, "Bad Request: Order ID must be a string");
     }
     const data = await orderServices.getOrderById(orderId);
-    res.status(200).json({ message: "Order fetched successfully", data });
+    sendJSON(true, res, 200, "Order fetched successfully", data);
   } catch (error) {
     next(error);
   }
@@ -96,42 +95,80 @@ const cancelOrderStatus = async (
       throw createError(400, "Bad Request: Order ID must be a string");
     }
     const data = await orderServices.cancelOrderStatus(orderId);
-    res.status(200).json({ message: "Order cancelled successfully", data });
+    sendJSON(true, res, 200, "Order cancelled successfully", data);
   } catch (error) {
     next(error);
   }
 };
 
-const getOrdersByUserId = async (
+const getAllOrdersOfCustomer = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const { page, limit, sortBy, sortOrder, skip } = paginationSort(req.query);
-    const userId = req.user?.id;
+    const user = req.user;
 
-    if (!userId) {
+    if (!user) {
       throw createError(400, "Bad Request: User ID is missing");
     }
-    if (typeof userId !== "string") {
-      throw createError(400, "Bad Request: User ID must be a string");
+
+    console.log("User in getAllOrdersOfCustomer:", user);
+    console.log("******************************************");
+
+    if (user.role !== "CUSTOMER") {
+      throw createError(
+        403,
+        "Forbidden: Only customers can access their orders",
+      );
     }
 
     const status = req.query.status as OrderStatus | undefined;
 
-    const { data, pagination } = await orderServices.getOrdersByUserId({
+    const { data, pagination } = await orderServices.getAllOrdersOfCustomer({
       status,
-      userId,
+      userId: user.id,
       page,
       limit,
       sortBy,
       sortOrder,
       skip,
     });
-    res
-      .status(200)
-      .json({ message: "Orders fetched successfully", data, pagination });
+    sendJSON(true, res, 200, "Orders fetched successfully", data, pagination);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllOrdersOfSeller = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { page, limit, sortBy, sortOrder, skip } = paginationSort(req.query);
+    const user = req.user;
+
+    if (!user) {
+      throw createError(400, "Bad Request: User ID is missing");
+    }
+    if (user.role !== "SELLER") {
+      throw createError(403, "Forbidden: Only sellers can access their orders");
+    }
+
+    const status = req.query.status as OrderStatus | undefined;
+
+    const { data, pagination } = await orderServices.getAllOrdersOfSeller({
+      status,
+      userId: user.id,
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      skip,
+    });
+    sendJSON(true, res, 200, "Orders fetched successfully", data, pagination);
   } catch (error) {
     next(error);
   }
@@ -140,7 +177,8 @@ const getOrdersByUserId = async (
 export const orderControllers = {
   createOrder,
   getOrderById,
-  getOrdersByUserId,
+  getAllOrdersOfCustomer,
   updateOrderStatus,
   cancelOrderStatus,
+  getAllOrdersOfSeller,
 };

@@ -30,4 +30,7 @@ router.delete(
   categoryControllers.deleteCategoryById,
 );
 
+// GET:api/v1/category -> get all categories || Public
+router.get("/", categoryControllers.getAllCategories);
+
 export const categoryRoutes = router;

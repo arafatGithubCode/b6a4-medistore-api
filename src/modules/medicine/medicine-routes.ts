@@ -31,4 +31,7 @@ router.delete(
   medicineControllers.deleteMedicineById,
 );
 
+//GET:api/v1/medicine/seller/:sellerId -> get medicines by seller id || public
+router.get("/seller/:sellerId", medicineControllers.getMedicineBySellerId);
+
 export const medicineRoutes = router;

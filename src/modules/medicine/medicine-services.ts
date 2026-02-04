@@ -3,7 +3,7 @@ import { Medicine, Prisma } from "../../../generated/prisma/client";
 
 import { MedicineWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
-import { FilterOptions } from "../../types";
+import { FilterOptions, PaginationOptions } from "../../types";
 
 const createMedicine = async (payload: Medicine) => {
   // check if the category exists
@@ -138,10 +138,37 @@ const deleteMedicineById = async (id: string) => {
   });
 };
 
+const getMedicineBySellerId = async (
+  sellerId: string,
+  options: PaginationOptions,
+) => {
+  const medicines = await prisma.medicine.findMany({
+    where: { sellerId },
+    skip: options.skip,
+    take: options.limit,
+    orderBy: {
+      [options.sortBy]: options.sortOrder as Prisma.SortOrder,
+    },
+  });
+  const total = await prisma.medicine.count({
+    where: { sellerId },
+  });
+  return {
+    data: medicines,
+    pagination: {
+      total,
+      page: options.page,
+      limit: options.limit,
+      totalPages: Math.ceil(total / options.limit),
+    },
+  };
+};
+
 export const medicineServices = {
   createMedicine,
   updateMedicineById,
   getMedicineById,
   getAllMedicines,
   deleteMedicineById,
+  getMedicineBySellerId,
 };

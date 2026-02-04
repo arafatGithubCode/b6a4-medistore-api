@@ -143,10 +143,48 @@ const deleteMedicineById = async (
   }
 };
 
+const getMedicineBySellerId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const sellerId = req.params.sellerId;
+    if (!sellerId) {
+      throw createError(400, "Seller ID is required");
+    }
+    if (typeof sellerId !== "string") {
+      throw createError(400, "Seller ID must be a string");
+    }
+    const { page, limit, skip, sortBy, sortOrder } = paginationSort(req.query);
+    const { data, pagination } = await medicineServices.getMedicineBySellerId(
+      sellerId,
+      {
+        page,
+        limit,
+        skip,
+        sortBy,
+        sortOrder,
+      },
+    );
+    sendJSON(
+      true,
+      res,
+      200,
+      "Medicines fetched successfully",
+      data,
+      pagination,
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const medicineControllers = {
   createMedicine,
   updateMedicineById,
   getMedicineById,
   getAllMedicines,
   deleteMedicineById,
+  getMedicineBySellerId,
 };

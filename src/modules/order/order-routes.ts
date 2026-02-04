@@ -21,10 +21,21 @@ router.patch(
   orderControllers.cancelOrderStatus,
 );
 
+//GET:api/v1/orders/seller -> get all orders of seller || seller & admin
+router.get(
+  "/seller",
+  proxy("order", "read"),
+  orderControllers.getAllOrdersOfSeller,
+);
+
 //GET:api/v1/orders/:orderId -> get order by id || customer, seller & admin
 router.get("/:orderId", proxy("order", "read"), orderControllers.getOrderById);
 
-//GET:api/v1/orders/-> get orders by current user id || customer & admin & seller
-router.get("/", proxy("order", "read"), orderControllers.getOrdersByUserId);
+//GET:api/v1/orders/-> get all orders of customer || customer & admin
+router.get(
+  "/",
+  proxy("order", "read"),
+  orderControllers.getAllOrdersOfCustomer,
+);
 
 export const orderRoutes = router;

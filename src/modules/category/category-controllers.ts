@@ -103,10 +103,24 @@ const deleteCategoryById = async (
   }
 };
 
+const getAllCategories = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await categoryServices.getAllCategories();
+    sendJSON(true, res, 200, "Categories retrieved successfully", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const categoryControllers = {
   createCategory,
   getCategoryBySlug,
   getCategoryById,
   updateCategoryById,
   deleteCategoryById,
+  getAllCategories,
 };

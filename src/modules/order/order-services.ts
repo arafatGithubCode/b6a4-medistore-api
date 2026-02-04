@@ -170,7 +170,7 @@ const getOrderById = async (id: string) => {
   return result;
 };
 
-const getOrdersByUserId = async ({
+const getAllOrdersOfCustomer = async ({
   status,
   userId,
   page,
@@ -230,10 +230,81 @@ const getOrdersByUserId = async ({
   };
 };
 
+const getAllOrdersOfSeller = async ({
+  status,
+  userId,
+  page,
+  limit,
+  sortBy,
+  sortOrder,
+  skip,
+}: PaginationOptions & {
+  status: OrderStatus | undefined;
+  userId: string;
+}) => {
+  const andClauses: OrderWhereInput[] = [
+    {
+      items: {
+        some: {
+          medicine: {
+            sellerId: userId,
+          },
+        },
+      },
+    },
+  ];
+
+  if (status) {
+    andClauses.push({ status });
+  }
+
+  const result = await prisma.order.findMany({
+    where: {
+      AND: andClauses,
+    },
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder as Prisma.SortOrder,
+    },
+    include: {
+      items: {
+        include: {
+          medicine: true,
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  const total = await prisma.order.count({
+    where: {
+      AND: andClauses,
+    },
+  });
+
+  return {
+    data: result,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
 export const orderServices = {
   createOrder,
   getOrderById,
-  getOrdersByUserId,
+  getAllOrdersOfCustomer,
   updateOrderStatus,
   cancelOrderStatus,
+  getAllOrdersOfSeller,
 };
