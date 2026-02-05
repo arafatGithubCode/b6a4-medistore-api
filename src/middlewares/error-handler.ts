@@ -25,6 +25,7 @@ export const errorHandler = (
       case "P2003": // Foreign key constraint failed
         statusCode = 400;
         message = "Foreign key constraint failed";
+        console.log("Foreign Key Error Details:", err.meta);
         break;
       case "P2000": // Value too long for column
         statusCode = 400;
