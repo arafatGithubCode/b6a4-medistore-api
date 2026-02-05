@@ -134,17 +134,20 @@ const deleteMedicineById = async (id: string) => {
   });
 
   // Delete related cart items and order items first to avoid foreign key constraints
-  await prisma.cartItem.deleteMany({
-    where: { medicineId: id },
-  });
 
-  await prisma.orderItem.deleteMany({
-    where: { medicineId: id },
-  });
-
-  await prisma.medicine.delete({
-    where: { id },
-  });
+  await prisma.$transaction((tx) =>
+    Promise.all([
+      tx.cartItem.deleteMany({
+        where: { medicineId: id },
+      }),
+      tx.orderItem.deleteMany({
+        where: { medicineId: id },
+      }),
+      tx.medicine.delete({
+        where: { id },
+      }),
+    ]),
+  );
 };
 
 const getMedicineBySellerId = async (
