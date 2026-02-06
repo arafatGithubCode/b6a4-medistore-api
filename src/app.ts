@@ -11,7 +11,7 @@ const app = express();
 // Configure CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://b6a4-medistore-frontend.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
