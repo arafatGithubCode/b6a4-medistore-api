@@ -3,8 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx --watch src/server.ts",
-    "seed::admin": "tsx src/scripts/seed-admin.ts",
-    "build": "prisma generate",
+    "seed:admin": "tsx src/scripts/seed-admin.ts",
     "start": "tsx src/server.ts"
   },
   "devDependencies": {
