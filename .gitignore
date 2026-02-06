@@ -19,5 +19,3 @@ dist
 
 #!.yarn/cache
 .pnp.*
-
-/generated/prisma
