@@ -63,4 +63,18 @@ export const auth = betterAuth({
       },
     }),
   ],
+  advanced: {
+    cookiePrefix: "medistore",
+    cookies: {
+      session_token: {
+        name: "medistore_session_token",
+        attributes: {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+          path: "/",
+        },
+      },
+    },
+  },
 });
