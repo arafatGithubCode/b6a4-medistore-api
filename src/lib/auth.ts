@@ -12,7 +12,11 @@ import { prisma } from "./prisma";
 
 export const auth = betterAuth({
   baseURL: BETTER_AUTH_URL,
-  trustedOrigins: [BETTER_AUTH_URL as string, "http://localhost:3000"],
+  trustedOrigins: [
+    BETTER_AUTH_URL as string,
+    "http://localhost:3000",
+    "https://b6a4-medistore-frontend.vercel.app",
+  ],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -59,40 +63,4 @@ export const auth = betterAuth({
       },
     }),
   ],
-  //   hooks: {
-  //     before: createAuthMiddleware(async (ctx) => {
-  //       const { body, path } = ctx;
-
-  //       if (path === "/sign-up/email") {
-  //         // prevent admins from being created via signup
-  //         if (body.role && body.role === Role.ADMIN) {
-  //           throw createError(400, "Invalid role for signup");
-  //         }
-  //         // allow only CUSTOMER | SELLER role during signup
-  //         if (body.role && ![Role.CUSTOMER, Role.SELLER].includes(body.role)) {
-  //           throw createError(400, "Invalid role for signup");
-  //         }
-  //       }
-  //     }),
-  //     after: createAuthMiddleware(async (ctx) => {
-  //       const { path, body } = ctx;
-
-  //       // update role immediately after signup
-  //       if (path === "/sign-up/email") {
-  //         // force role to CUSTOMER | SELLER only
-  //         if (![Role.CUSTOMER, Role.SELLER].includes(body.role)) {
-  //           body.role = Role.CUSTOMER;
-  //         }
-
-  //         await prisma.user.update({
-  //           where: {
-  //             email: body.email,
-  //           },
-  //           data: {
-  //             role: body.role,
-  //           },
-  //         });
-  //       }
-  //     }),
-  //   },
 });
