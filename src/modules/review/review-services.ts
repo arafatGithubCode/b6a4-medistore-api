@@ -9,10 +9,9 @@ const createReview = async (payload: Review) => {
     where: { id: payload.medicineId },
   });
 
-  // check if the order is status is 'Delivered' for this user and medicine
+  // check if the order status is 'Delivered' for this user
   const deliveredOrder = await prisma.order.findFirst({
     where: {
-      medicineId: payload.medicineId,
       userId: payload.userId,
       status: OrderStatus.DELIVERED,
     },
@@ -20,7 +19,7 @@ const createReview = async (payload: Review) => {
 
   if (!deliveredOrder) {
     throw new Error(
-      "You can only review medicines that you have ordered and received.",
+      `You can only give a review for successfully delivered order`,
     );
   }
 
@@ -115,10 +114,18 @@ const deleteReviewById = async (id: string) => {
   return review;
 };
 
+const getReviewByMedicineId = async (medicineId: string) => {
+  const reviews = await prisma.review.findMany({
+    where: { medicineId },
+  });
+  return reviews;
+};
+
 export const reviewServices = {
   createReview,
   updateReview,
   getReviewById,
   getAllReviews,
   deleteReviewById,
+  getReviewByMedicineId,
 };

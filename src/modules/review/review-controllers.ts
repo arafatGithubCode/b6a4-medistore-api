@@ -141,10 +141,31 @@ const deleteReviewById = async (
   }
 };
 
+const getReviewByMedicineId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const medicineId = req.params.medicineId;
+    if (!medicineId) {
+      throw createError(400, "Bad Request: Medicine ID is missing");
+    }
+    if (typeof medicineId !== "string") {
+      throw createError(400, "Bad Request: Medicine ID must be a string");
+    }
+    const data = await reviewServices.getReviewByMedicineId(medicineId);
+    sendJSON(true, res, 200, "Reviews fetched successfully", data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const reviewControllers = {
   createReview,
   updateReview,
   getReviewById,
   getAllReviews,
+  getReviewByMedicineId,
   deleteReviewById,
 };

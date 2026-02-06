@@ -31,4 +31,7 @@ router.delete(
   reviewControllers.deleteReviewById,
 );
 
+// GET:api/v1/reviews/medicine/:medicineId || get reviews by Medicine ID || public
+router.get("/medicine/:medicineId", reviewControllers.getReviewByMedicineId);
+
 export const reviewRoutes = router;
