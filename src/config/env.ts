@@ -30,10 +30,26 @@ if (!GOOGLE_CLIENT_SECRET) {
   );
 }
 
+// frontend url
+const FRONTEND_URL =
+  process.env.FRONTEND_URL || "https://b6a4-medistore-frontend.vercel.app";
+
+if (!FRONTEND_URL) {
+  throw new Error("FRONTEND_URL is not defined in environment variables");
+}
+
+// node env
+const NODE_ENV = process.env.NODE_ENV;
+if (!NODE_ENV) {
+  throw new Error("NODE_ENV is not defined in environment variables");
+}
+
 export {
   BETTER_AUTH_URL,
   DATABASE_URL,
+  FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
+  NODE_ENV,
   PORT,
 };

@@ -4,6 +4,7 @@ import { admin } from "better-auth/plugins";
 import { Role } from "../../generated/prisma/enums";
 import {
   BETTER_AUTH_URL,
+  FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
 } from "../config/env";
@@ -12,11 +13,7 @@ import { prisma } from "./prisma";
 
 export const auth = betterAuth({
   baseURL: BETTER_AUTH_URL,
-  trustedOrigins: [
-    BETTER_AUTH_URL as string,
-    "http://localhost:3000",
-    "https://b6a4-medistore-frontend.vercel.app",
-  ],
+  trustedOrigins: [BETTER_AUTH_URL as string, FRONTEND_URL as string],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

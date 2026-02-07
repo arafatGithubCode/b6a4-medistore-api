@@ -2,6 +2,7 @@ import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
 import createError from "http-errors";
+import { FRONTEND_URL } from "./config/env";
 import { auth } from "./lib/auth";
 import { errorHandler } from "./middlewares/error-handler";
 import { v1Routes } from "./routes/v1";
@@ -11,8 +12,7 @@ const app = express();
 // Configure CORS middleware
 app.use(
   cors({
-    origin:
-      process.env.FRONTEND_URL || "https://b6a4-medistore-frontend.vercel.app",
+    origin: FRONTEND_URL,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
