@@ -21,7 +21,7 @@ export const proxy = (resource: resource, action: action) => {
       });
 
       if (!session || !session.user) {
-        sendJSON(false, res, 401, "Unauthorized");
+        return sendJSON(false, res, 401, "Unauthorized");
       }
 
       // attache user to req object
@@ -37,7 +37,7 @@ export const proxy = (resource: resource, action: action) => {
       });
 
       if (!hasPermission || !hasPermission.success) {
-        sendJSON(false, res, 403, "Forbidden");
+        return sendJSON(false, res, 403, "Forbidden");
       }
 
       next();

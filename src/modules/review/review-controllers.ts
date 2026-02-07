@@ -41,7 +41,7 @@ const createReview = async (
 
     const data = await reviewServices.createReview(payload);
 
-    sendJSON(true, res, 201, "Review created successfully", data);
+    return sendJSON(true, res, 201, "Review created successfully", data);
   } catch (error) {
     next(error);
   }
@@ -68,7 +68,7 @@ const updateReview = async (
 
     const data = await reviewServices.updateReview(reviewId, payload);
 
-    sendJSON(true, res, 200, "Review updated successfully", data);
+    return sendJSON(true, res, 200, "Review updated successfully", data);
   } catch (error) {
     next(error);
   }
@@ -88,7 +88,7 @@ const getReviewById = async (
       throw createError(400, "Bad Request: Review ID must be a string");
     }
     const data = await reviewServices.getReviewById(reviewId);
-    sendJSON(true, res, 200, "Review fetched successfully", data);
+    return sendJSON(true, res, 200, "Review fetched successfully", data);
   } catch (error) {
     next(error);
   }
@@ -112,7 +112,7 @@ const getAllReviews = async (
       skip,
       rating,
     });
-    sendJSON(true, res, 200, "Reviews fetched successfully", {
+    return sendJSON(true, res, 200, "Reviews fetched successfully", {
       data,
       pagination,
     });
@@ -135,7 +135,7 @@ const deleteReviewById = async (
       throw createError(400, "Bad Request: Review ID must be a string");
     }
     const data = await reviewServices.deleteReviewById(reviewId);
-    sendJSON(true, res, 200, "Review deleted successfully", data);
+    return sendJSON(true, res, 200, "Review deleted successfully", data);
   } catch (error) {
     next(error);
   }
@@ -155,7 +155,7 @@ const getReviewByMedicineId = async (
       throw createError(400, "Bad Request: Medicine ID must be a string");
     }
     const data = await reviewServices.getReviewByMedicineId(medicineId);
-    sendJSON(true, res, 200, "Reviews fetched successfully", data);
+    return sendJSON(true, res, 200, "Reviews fetched successfully", data);
   } catch (error) {
     next(error);
   }

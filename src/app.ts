@@ -33,7 +33,6 @@ app.get("/", (req, res) => {
 // not found route handler
 app.use((_req, res, next) => {
   const error = createError(404, "Requested resource not found");
-  res.status(error.status);
   next(error);
 });
 

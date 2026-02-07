@@ -17,7 +17,7 @@ const createCart = async (req: Request, res: Response, next: NextFunction) => {
 
     const payload: TCartPayload = req.body;
     const data = await cartServices.createCart(userId, payload);
-    sendJSON(true, res, 201, "Cart created/updated successfully", data);
+    return sendJSON(true, res, 201, "Cart created/updated successfully", data);
   } catch (error) {
     next(error);
   }
@@ -47,7 +47,14 @@ const getCurrentUserCart = async (
       sortOrder,
     });
 
-    sendJSON(true, res, 200, "Carts fetched successfully", data, pagination);
+    return sendJSON(
+      true,
+      res,
+      200,
+      "Carts fetched successfully",
+      data,
+      pagination,
+    );
   } catch (error) {
     next(error);
   }
@@ -82,7 +89,7 @@ const decrementMedicineQuantityInCart = async (
       medicineId,
       quantity,
     );
-    sendJSON(
+    return sendJSON(
       true,
       res,
       200,
@@ -115,7 +122,7 @@ const deleteCartItem = async (
       throw createError(400, "Bad Request: Medicine ID must be a string");
     }
     await cartServices.deleteCartItem(userId, medicineId);
-    sendJSON(true, res, 200, "Cart item deleted successfully");
+    return sendJSON(true, res, 200, "Cart item deleted successfully");
   } catch (error) {
     next(error);
   }

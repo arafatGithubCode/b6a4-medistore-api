@@ -29,7 +29,7 @@ const createMedicine = async (
     }
 
     const data = await medicineServices.createMedicine(payload);
-    sendJSON(true, res, 201, "Medicine created successfully", data);
+    return sendJSON(true, res, 201, "Medicine created successfully", data);
   } catch (error) {
     next(error);
   }
@@ -63,7 +63,7 @@ const updateMedicineById = async (
     }
 
     const data = await medicineServices.updateMedicineById(medicineId, payload);
-    sendJSON(true, res, 200, "Medicine updated successfully", data);
+    return sendJSON(true, res, 200, "Medicine updated successfully", data);
   } catch (error) {
     next(error);
   }
@@ -83,7 +83,7 @@ const getMedicineById = async (
       throw createError(400, "Medicine ID must be a string");
     }
     const data = await medicineServices.getMedicineById(medicineId);
-    sendJSON(true, res, 200, "Medicine fetched successfully", data);
+    return sendJSON(true, res, 200, "Medicine fetched successfully", data);
   } catch (error) {
     next(error);
   }
@@ -137,7 +137,7 @@ const deleteMedicineById = async (
       throw createError(400, "Medicine ID must be a string");
     }
     await medicineServices.deleteMedicineById(medicineId);
-    sendJSON(true, res, 200, "Medicine deleted successfully");
+    return sendJSON(true, res, 200, "Medicine deleted successfully");
   } catch (error) {
     next(error);
   }
@@ -167,7 +167,7 @@ const getMedicineBySellerId = async (
         sortOrder,
       },
     );
-    sendJSON(
+    return sendJSON(
       true,
       res,
       200,

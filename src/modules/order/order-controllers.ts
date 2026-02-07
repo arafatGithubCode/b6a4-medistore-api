@@ -27,7 +27,7 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const data = await orderServices.createOrder(payload, userId);
-    sendJSON(true, res, 201, "Order created successfully", data);
+    return sendJSON(true, res, 201, "Order created successfully", data);
   } catch (error) {
     next(error);
   }
@@ -55,7 +55,7 @@ const updateOrderStatus = async (
     }
 
     const data = await orderServices.updateOrderStatus(orderId, status);
-    sendJSON(true, res, 200, "Order status updated successfully", data);
+    return sendJSON(true, res, 200, "Order status updated successfully", data);
   } catch (error) {
     next(error);
   }
@@ -75,7 +75,7 @@ const getOrderById = async (
       throw createError(400, "Bad Request: Order ID must be a string");
     }
     const data = await orderServices.getOrderById(orderId);
-    sendJSON(true, res, 200, "Order fetched successfully", data);
+    return sendJSON(true, res, 200, "Order fetched successfully", data);
   } catch (error) {
     next(error);
   }
@@ -95,7 +95,7 @@ const cancelOrderStatus = async (
       throw createError(400, "Bad Request: Order ID must be a string");
     }
     const data = await orderServices.cancelOrderStatus(orderId);
-    sendJSON(true, res, 200, "Order cancelled successfully", data);
+    return sendJSON(true, res, 200, "Order cancelled successfully", data);
   } catch (error) {
     next(error);
   }
@@ -135,7 +135,14 @@ const getAllOrdersOfCustomer = async (
       sortOrder,
       skip,
     });
-    sendJSON(true, res, 200, "Orders fetched successfully", data, pagination);
+    return sendJSON(
+      true,
+      res,
+      200,
+      "Orders fetched successfully",
+      data,
+      pagination,
+    );
   } catch (error) {
     next(error);
   }
@@ -168,7 +175,14 @@ const getAllOrdersOfSeller = async (
       sortOrder,
       skip,
     });
-    sendJSON(true, res, 200, "Orders fetched successfully", data, pagination);
+    return sendJSON(
+      true,
+      res,
+      200,
+      "Orders fetched successfully",
+      data,
+      pagination,
+    );
   } catch (error) {
     next(error);
   }

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import { Role } from "../../../generated/prisma/enums";
 import { paginationSort } from "../../helpers/pagination-sort";
+import { sendJSON } from "../../helpers/send-json";
 import { userServices } from "./user-services";
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -24,7 +25,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       password,
       role: roleUpper,
     });
-    res.status(201).json({ message: "User signed up successfully", data });
+    return sendJSON(true, res, 201, "User signed up successfully", data);
   } catch (error) {
     next(error);
   }
@@ -40,7 +41,7 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
       throw createError(400, "Bad Request: User ID must be a string");
     }
     const data = await userServices.me(userId);
-    res.status(200).json({ message: "User fetched successfully", data });
+    return sendJSON(true, res, 200, "User fetched successfully", data);
   } catch (error) {
     next(error);
   }
@@ -60,9 +61,14 @@ const getAllUsers = async (
       sortOrder,
       skip,
     });
-    res
-      .status(200)
-      .json({ message: "Users fetched successfully", data, pagination });
+    return sendJSON(
+      true,
+      res,
+      200,
+      "Users fetched successfully",
+      data,
+      pagination,
+    );
   } catch (error) {
     next(error);
   }
@@ -78,7 +84,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
       throw createError(400, "Bad Request: User ID must be a string");
     }
     const data = await userServices.getUserById(userId);
-    res.status(200).json({ message: "User fetched successfully", data });
+    return sendJSON(true, res, 200, "User fetched successfully", data);
   } catch (error) {
     next(error);
   }
@@ -98,7 +104,7 @@ const deleteUserById = async (
       throw createError(400, "Bad Request: User ID must be a string");
     }
     const data = await userServices.deleteUserById(userId);
-    res.status(200).json({ message: "User deleted successfully", data });
+    return sendJSON(true, res, 200, "User deleted successfully", data);
   } catch (error) {
     next(error);
   }
@@ -125,7 +131,7 @@ const updateUserById = async (
     delete updateData.createdAt;
     delete updateData.updatedAt;
     const data = await userServices.updateUserById(userId, updateData);
-    res.status(200).json({ message: "User updated successfully", data });
+    return sendJSON(true, res, 200, "User updated successfully", data);
   } catch (error) {
     next(error);
   }

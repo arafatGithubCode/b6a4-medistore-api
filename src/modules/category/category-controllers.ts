@@ -15,7 +15,7 @@ const createCategory = async (
     payload.slug = getSlug(payload.name);
 
     const result = await categoryServices.createCategory(payload);
-    sendJSON(true, res, 201, "Category created successfully", result);
+    return sendJSON(true, res, 201, "Category created successfully", result);
   } catch (error) {
     next(error);
   }
@@ -35,7 +35,7 @@ const getCategoryBySlug = async (
       throw createError(400, "Slug parameter must be a string");
     }
     const result = await categoryServices.getCategoryBySlug(slug);
-    sendJSON(true, res, 200, "Category retrieved successfully", result);
+    return sendJSON(true, res, 200, "Category retrieved successfully", result);
   } catch (error) {
     next(error);
   }
@@ -55,7 +55,7 @@ const getCategoryById = async (
       throw createError(400, "ID parameter must be a string");
     }
     const result = await categoryServices.getCategoryById(id);
-    sendJSON(true, res, 200, "Category retrieved successfully", result);
+    return sendJSON(true, res, 200, "Category retrieved successfully", result);
   } catch (error) {
     next(error);
   }
@@ -76,7 +76,7 @@ const updateCategoryById = async (
     }
     const payload: Partial<Category> = req.body;
     const result = await categoryServices.updateCategoryById(id, payload);
-    sendJSON(true, res, 200, "Category updated successfully", result);
+    return sendJSON(true, res, 200, "Category updated successfully", result);
   } catch (error) {
     next(error);
   }
@@ -97,7 +97,7 @@ const deleteCategoryById = async (
     }
 
     await categoryServices.deleteCategoryById(id);
-    sendJSON(true, res, 200, "Category deleted successfully");
+    return sendJSON(true, res, 200, "Category deleted successfully");
   } catch (error) {
     next(error);
   }
@@ -110,7 +110,13 @@ const getAllCategories = async (
 ) => {
   try {
     const result = await categoryServices.getAllCategories();
-    sendJSON(true, res, 200, "Categories retrieved successfully", result);
+    return sendJSON(
+      true,
+      res,
+      200,
+      "Categories retrieved successfully",
+      result,
+    );
   } catch (error) {
     next(error);
   }
