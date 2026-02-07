@@ -12,7 +12,7 @@ const app = express();
 // Configure CORS middleware
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: [FRONTEND_URL, "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
