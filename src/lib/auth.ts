@@ -13,7 +13,11 @@ import { prisma } from "./prisma";
 
 export const auth = betterAuth({
   baseURL: BETTER_AUTH_URL,
-  trustedOrigins: [BETTER_AUTH_URL as string, FRONTEND_URL as string],
+  trustedOrigins: [
+    BETTER_AUTH_URL as string,
+    FRONTEND_URL as string,
+    "http://localhost:3000",
+  ],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
